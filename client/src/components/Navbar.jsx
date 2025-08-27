@@ -5,7 +5,6 @@ import arrow_down from "../assets/arrow-down.svg";
 import search from "../assets/search.svg";
 import favorite from "../assets/favorite.svg";
 import addButton from "../assets/addButton.png";
-import { set } from "mongoose";
 
 export const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
