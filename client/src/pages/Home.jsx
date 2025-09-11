@@ -7,7 +7,7 @@ import { ProductContext } from "../ProductContext";
 export const Home = () => {
   
   const { products } = useContext(ProductContext);
-console.log(products);
+console.log("hiii",products);
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
