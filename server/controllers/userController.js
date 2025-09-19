@@ -8,7 +8,7 @@ export const registerUser=async(req,res)=>{
     }
     const newUser=new User({email,password,name})
     await newUser.save();
-    res.json({message:'User registered Successfully',name:name})
+    res.json({message:'User registered Successfully',name:name,userId:newUser._id})
 }
 
 export const loginUser=async (req,res)=>{
