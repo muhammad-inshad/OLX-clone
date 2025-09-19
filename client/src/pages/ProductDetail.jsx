@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 import { Footer } from '../components/footer';
 
 export const ProductDetail = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
     const {id}=useParams()
       const [product, setProduct] = useState(null);
       useEffect(()=>{
-        fetch(`http://localhost:5000/api/getproducts/${id}`)
+        fetch(`${API_URL}/getproducts/${id}`)
         .then((res)=>res.json())
         .then((data)=>setProduct(data))
         .catch((err)=>console.error("Error fetching products:",err))
@@ -29,7 +30,10 @@ return (
     <h1 className="text-xl sm:text-2xl font-bold mb-2">{product.title}</h1>
     <p className="text-gray-700 mb-2">{product.category}</p>
     <p className="text-blue-600 font-bold text-lg sm:text-xl mb-4">₹{product.price}</p>
-    <p className="text-gray-600">{product.description || "No description available."}</p>
+  <p className="text-gray-950 text-sm mt-1">
+  Uploaded by: {product.user?.name}, {product.user?.email}
+</p>
+
   </div>
 </div>
     ) : (

@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom'
 import { useState, useEffect } from "react";
 import symbol from "../assets/symbol.png";
 import arrow_down from "../assets/arrow-down.svg";
@@ -6,11 +7,15 @@ import search from "../assets/search.svg";
 import favorite from "../assets/favorite.svg";
 import addButton from "../assets/addButton.png";
 
+import {Myadds} from '../pages/Myadds'
+
 export const Navbar = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [isSellOpen, setSellOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [UserId, setUserId] = useState(null);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
     name: "",
@@ -25,12 +30,12 @@ export const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState("");
 
-  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setIsLoggedIn(true);
       setUserData(JSON.parse(storedUser).name);
+      setUserId(JSON.parse(storedUser).ID)
     }
   }, []);
 
@@ -50,7 +55,10 @@ export const Navbar = () => {
 
   const handleAddProduct = async () => {
     if (!isLoggedIn) {
-      setNotification({ type: "error", message: "Please log in to add a product!" });
+      setNotification({
+        type: "error",
+        message: "Please log in to add a product!",
+      });
       setSellOpen(false);
       setIsLoginOpen(true);
       return;
@@ -61,9 +69,10 @@ export const Navbar = () => {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("image", file);
+    formData.append("UserId", UserId);
 
     try {
-      const res = await fetch("http://localhost:5000/api/addProduct", {
+      const res = await fetch(`${API_URL}/api/addProduct`, {
         method: "POST",
         body: formData,
       });
@@ -72,7 +81,10 @@ export const Navbar = () => {
       console.log("Server response:", data);
 
       if (res.ok) {
-        setNotification({ type: "success", message: "Product added successfully!" });
+        setNotification({
+          type: "success",
+          message: "Product added successfully!",
+        });
         setSellOpen(false);
         setTitle("");
         setCategory("");
@@ -80,7 +92,10 @@ export const Navbar = () => {
         setSelectedImage(null);
         setFile(null);
       } else {
-        setNotification({ type: "error", message: data.message || "Failed to add product!" });
+        setNotification({
+          type: "error",
+          message: data.message || "Failed to add product!",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
@@ -89,7 +104,7 @@ export const Navbar = () => {
   };
 
   const handleLogin = () => {
-    fetch("http://localhost:5000/api/loginUser", {
+    fetch(`${API_URL}/loginUser`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(loginData),
@@ -97,7 +112,9 @@ export const Navbar = () => {
       .then((res) => {
         if (!res.ok) {
           return res.json().then((errorData) => {
-            throw new Error(errorData.message || `Login failed with status: ${res.status}`);
+            throw new Error(
+              errorData.message || `Login failed with status: ${res.status}`
+            );
           });
         }
         return res.json();
@@ -107,18 +124,21 @@ export const Navbar = () => {
         setNotification({ type: "success", message: "Login successful!" });
         setUserData(data.name);
         setIsLoggedIn(true);
-        localStorage.setItem("user", JSON.stringify({ name: data.name }));
+       localStorage.setItem("user", JSON.stringify({ name: data.name ,_id:data.userId}));
         setIsLoginOpen(false);
         setLoginData({ email: "", password: "" });
       })
       .catch((err) => {
         console.error("Login error:", err);
-        setNotification({ type: "error", message: err.message || "Login failed!" });
+        setNotification({
+          type: "error",
+          message: err.message || "Login failed!",
+        });
       });
   };
 
   const handleRegister = () => {
-    fetch("http://localhost:5000/api/registerUser", {
+    fetch(`${API_URL}/registerUser`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(registerData),
@@ -133,16 +153,23 @@ export const Navbar = () => {
       })
       .then((data) => {
         console.log("Response from server:", data);
-        setNotification({ type: "success", message: data.message || "Registered successfully!" });
+        setNotification({
+          type: "success",
+          message: data.message || "Registered successfully!",
+        });
         setUserData(data.name);
+        setUserId(data.userId);
         setIsLoggedIn(true);
-        localStorage.setItem("user", JSON.stringify({ name: data.name }));
+        localStorage.setItem("user", JSON.stringify({ name: data.name ,_id:data.userId}));
         setRegister(false);
         setRegisterData({ name: "", email: "", password: "" });
       })
       .catch((err) => {
         console.error("Request failed:", err);
-        setNotification({ type: "error", message: err.message || "Register failed!" });
+        setNotification({
+          type: "error",
+          message: err.message || "Register failed!",
+        });
       });
   };
 
@@ -155,7 +182,10 @@ export const Navbar = () => {
 
   const setSell = () => {
     if (!isLoggedIn) {
-      setNotification({ type: "error", message: "Please log in to add a product!" });
+      setNotification({
+        type: "error",
+        message: "Please log in to add a product!",
+      });
       setIsLoginOpen(true);
       return;
     }
@@ -198,8 +228,13 @@ export const Navbar = () => {
         <div className="flex items-center gap-14 cursor-pointer">
           {isLoggedIn ? (
             <>
-              <p className="font-medium text-lg">{userData}</p>
-              <button onClick={handleLogout} className="font-medium text-lg text-red-500">
+            
+                <Link to={"/Myadds"}><p className="font-medium text-lg">{userData}/MY ADS</p></Link>
+         
+              <button
+                onClick={handleLogout}
+                className="font-medium text-lg text-red-500"
+              >
                 Logout
               </button>
             </>
@@ -248,14 +283,18 @@ export const Navbar = () => {
               type="text"
               placeholder="Email"
               value={loginData.email}
-              onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+              onChange={(e) =>
+                setLoginData({ ...loginData, email: e.target.value })
+              }
               className="w-full p-2 mb-3 border rounded"
             />
             <input
               type="password"
               placeholder="Password"
               value={loginData.password}
-              onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+              onChange={(e) =>
+                setLoginData({ ...loginData, password: e.target.value })
+              }
               className="w-full p-2 mb-3 border rounded"
             />
             <button
@@ -290,21 +329,27 @@ export const Navbar = () => {
               type="text"
               placeholder="Enter the name"
               value={registerData.name}
-              onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, name: e.target.value })
+              }
               className="w-full p-2 mb-3 border rounded"
             />
             <input
               type="text"
               placeholder="Enter the email"
               value={registerData.email}
-              onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, email: e.target.value })
+              }
               className="w-full p-2 mb-3 border rounded"
             />
             <input
               type="password"
               placeholder="Enter the password"
               value={registerData.password}
-              onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, password: e.target.value })
+              }
               className="w-full p-2 mb-3 border rounded"
             />
             <button
@@ -378,6 +423,7 @@ export const Navbar = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };
