@@ -3,7 +3,7 @@ import Product from '../models/product.js'
 export const addProduct=async (req, res) => {
   try {
     const { title, category, price,UserId} = req.body;
-  console.log("hiiiiiiiii:",UserId)
+ 
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -19,7 +19,7 @@ export const addProduct=async (req, res) => {
       },
       userId: UserId
     });
-
+ console.log("wow:",product.userId)
     await product.save();
     res.status(201).json({ message: "Product added successfully", product });
   } catch (error) {

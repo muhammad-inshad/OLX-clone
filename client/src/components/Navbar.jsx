@@ -35,7 +35,7 @@ export const Navbar = () => {
     if (storedUser) {
       setIsLoggedIn(true);
       setUserData(JSON.parse(storedUser).name);
-      setUserId(JSON.parse(storedUser).ID)
+      setUserId(JSON.parse(storedUser)._id)
     }
   }, []);
 
@@ -72,7 +72,7 @@ export const Navbar = () => {
     formData.append("UserId", UserId);
 
     try {
-      const res = await fetch(`${API_URL}/api/addProduct`, {
+      const res = await fetch(`${API_URL}/addProduct`, {
         method: "POST",
         body: formData,
       });
@@ -124,7 +124,7 @@ export const Navbar = () => {
         setNotification({ type: "success", message: "Login successful!" });
         setUserData(data.name);
         setIsLoggedIn(true);
-       localStorage.setItem("user", JSON.stringify({ name: data.name ,_id:data.userId}));
+       localStorage.setItem("user", JSON.stringify({ name: data.name ,_id:data.id}));
         setIsLoginOpen(false);
         setLoginData({ email: "", password: "" });
       })

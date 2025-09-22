@@ -20,5 +20,5 @@ export const loginUser=async (req,res)=>{
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
-  res.json({ message: "Login successful", name:user.name});
+  res.json({ message: "Login successful", name:user.name,id:user._id});
 }
